@@ -32,6 +32,13 @@ public class ReservationsRepo
         }
     }
     
+    public static async Task<List<Reservation>> GetReservationsByCustomer(int customerId)
+    {
+        await using var context = new RestaurantReservationDbContext();
+        var result = context.Reservations.Where(e => e.CustomerId == customerId).ToList();
+        return result;
+    }
+
     /// <summary>
     /// Query the ReservationDetails view
     /// </summary>

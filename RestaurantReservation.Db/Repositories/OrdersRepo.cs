@@ -1,4 +1,6 @@
-﻿namespace RestaurantReservation.Db.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace RestaurantReservation.Db.Repositories;
 
 public class OrdersRepo
 { 
@@ -28,4 +30,17 @@ public class OrdersRepo
             await context.SaveChangesAsync();
         }
     }
+    private static async Task<List<Order>> ListOrdersAndMenuItems(int reservationId)
+    {
+        await using var context = new RestaurantReservationDbContext();
+        var result = await context.Orders
+            .Where(o => o.ReservationId == reservationId)
+            // for all orders with this rev id, include orderItems
+            .Include(o => o.OrderItem)
+            // Then for all orderItems, include menuItems
+            .ThenInclude(oi=>oi!.MenuItem)
+            .ToListAsync();
+        return result;
+    }
+    
 }

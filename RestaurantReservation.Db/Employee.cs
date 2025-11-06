@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace RestaurantReservation.Db;
 
@@ -27,7 +28,12 @@ public class Employee
         context.Employees.Update(employee);
         await context.SaveChangesAsync();
     }
-
+    public static async Task<List<Employee>> ListManagersAsync()
+    {
+        await using var context = new RestaurantReservationDbContext();
+        var result =  await context.Employees.Where(e=>e.Position=="Manager").ToListAsync();
+        return result;
+    }
     public static async Task DeleteEmployeeAsync(int employeeId)
     {
         await using var context = new RestaurantReservationDbContext();

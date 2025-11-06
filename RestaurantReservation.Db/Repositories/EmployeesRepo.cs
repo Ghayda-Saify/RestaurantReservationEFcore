@@ -31,6 +31,19 @@ public class EmployeesRepo
             await context.SaveChangesAsync();
         }
     }
+    private static async Task<decimal> CalculateAverageOrderAmount(int employeeId)
+    {
+        await using var context = new RestaurantReservationDbContext();
+        var employeeOrders = context.Orders.Where(o => o.EmployeeId == employeeId).ToList();
+        if (employeeOrders.Count == 0)
+        {
+            return 0;
+        }
+            
+        var result = employeeOrders.Average(o => o.TotalAmount);
+            
+        return result;
+    }
     
     /// <summary>
     /// Query the EmployeeDetails view
